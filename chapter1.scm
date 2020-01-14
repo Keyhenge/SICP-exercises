@@ -85,7 +85,7 @@
 
 ;; Then he evaluates the expression
 
-(test 0 (p))
+;; (test 0 (p))
 
 ;; What behavior will Ben observe with an interpreter that uses applicative-order evaluation? What behavior will
 ;; he observe with an interpreter that uses normal-order evaluation? Explain your answer. (Assume that the
@@ -106,10 +106,10 @@
 
 ;; Eva demonstrates the program for Alyssa:
 
-(new-if (= 2 3) 0 5)
+;; (new-if (= 2 3) 0 5)
 ;; 5
 
-(new-if (= 1 1) 0 5)
+;; (new-if (= 1 1) 0 5)
 ;; 0
 
 ;; Delighted, Alyssa uses new-if to rewrite the square-root program:
@@ -144,8 +144,35 @@
 ;; a very small fraction of the guess. Design a square-root procedure that uses this kind of end test. Does this work
 ;; better for small and large numbers?
 
-(sqrt 0.00000002)
+;; (sqrt 0.00000002)
 ;; evaluates to 0.03125... because the next iteration takes it below the 0.001 threshold
 
-(sqrt 100000000000000000000000000000000000)
+;; (sqrt 100000000000000000000000000000000000)
 ;; never evaluates due to (improve guess x) returning the same value every time s
+
+;; Exercise 1.8.  Newton's method for cube roots is based on the fact that if y is an approximation to the cube root
+;; of x, then a better approximation is given by the value
+
+;; ((x/(y^2))+2y)/3
+
+;; Use this formula to implement a cube-root procedure analogous to the square-root procedure. (In section 1.3.4 we
+;; will see how to implement Newton's method in general as an abstraction of these square-root and cube-root procedures.)
+
+(define (cube x)
+  (* x x x))
+(define (cube-improve guess x)
+  (/ (+ (* 2 guess)
+	(/ x (square guess)))
+     3))
+(define (good-enough? guess x)
+  (< (abs (- (cube guess) x) 0.001)))
+(define (cbrt-iter guess x)
+  (if (good-enough? guess x)
+          guess
+          (cbrt-iter (cube-improve guess x)
+                     x)))
+
+(define (cbrt x)
+  (cbrt-iter 1.0 x))
+
+(cbrt 9)
